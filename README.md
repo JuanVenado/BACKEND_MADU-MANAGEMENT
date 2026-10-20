@@ -1,58 +1,92 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# MADU - Sistema de Gestión de Inventario
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicación web desarrollada para centralizar y optimizar el control de inventario de un negocio de distribución por mayoreo y menudeo. El proyecto permite gestionar productos, categorías, unidades, presentaciones, proveedores y movimientos (entradas, salidas y ajustes) con trazabilidad completa y auditoría de cambios.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Equipo de Trabajo / Autores
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Institución:** Universidad Tecnológica de Torreón (UTT)
+- **Materia:** Formulación de Proyectos
+- **Integrantes:**
+  - Carlos Daniel García Rodríguez
+  - Diego Reyes Nevarez
+  - Edgar Alexis Ochoa Duarte
+  - Ángel Gabriel Valenzuela Guerrero
+- **Asesor(a):** M.C.C. Jesus Del Toro Robledo
+- **Fecha de entrega:** Diciembre 2026
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Resumen del Proyecto
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**MADU** resuelve la problemática de la dispersión de registros y la falta de control en las existencias físicas frente a los registros digitales. Su arquitectura por capas separa claramente las responsabilidades entre la interfaz de usuario, la lógica de negocio centralizada en una API y la persistencia de datos relacionales, asegurando transacciones y existencias actualizadas en tiempo real.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Arquitectura y Tecnologías
 
-## Agentic Development
+El sistema sigue una arquitectura cliente-servidor de tres capas:
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+| Capa                        | Responsabilidad                                                                     | Tecnologías / Herramientas                    |
+| :-------------------------- | :---------------------------------------------------------------------------------- | :-------------------------------------------- |
+| **Presentación (Frontend)** | Interacción, navegación, formularios, tablas, filtros y mensajes responsivos.       | `React`, CSS / Componentes                    |
+| **Aplicación (Backend)**    | Reglas de negocio, validaciones, autorización, políticas, transacciones y API REST. | `Laravel` (PHP)                               |
+| **Datos (Base de datos)**   | Persistencia, relaciones, integridad referencial, índices y transacciones.          | `MySQL`, `MySQL Workbench`                    |
+| **Infraestructura**         | Publicación segura, dominio, certificados SSL y despliegue en la nube.              | `DigitalOcean`, `Plesk`, `Namecheap`, `HTTPS` |
+| **Gestión y Control**       | Control de versiones, ramas, metodologías ágiles y pruebas de API.                  | `Git`, `GitHub`, `Jira`, `Postman`, `Figma`   |
 
-```bash
-composer require laravel/boost --dev
+---
 
-php artisan boost:install
-```
+## Alcance Funcional del MVP (Producto Mínimo Viable)
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+El sistema prioriza las funcionalidades esenciales bajo criterios de aceptación estrictos:
 
-## Contributing
+1. **Autenticación y Seguridad:** Acceso exclusivo para el usuario administrador mediante correo y contraseña con cifrado (Hash) y expiración de sesiones inactivas.
+2. **Catálogos y Productos:** Alta, consulta, edición y desactivación de productos, categorías, unidades de medida y proveedores (evitando duplicados).
+3. **Manejo de Presentaciones:** Equivalencias y conversiones controladas entre unidad base y presentaciones autorizadas (piezas, paquetes, cajas, etc.).
+4. **Control de Movimientos:**
+   - **Entradas:** Incrementan el saldo disponible y registran la referencia comercial.
+   - **Salidas:** Disminuyen el saldo y se rechazan automáticamente si superan la existencia disponible (evitando saldos negativos).
+   - **Ajustes:** Positivos o negativos, estrictamente condicionados a un motivo justificado y permisos de administrador.
+5. **Existencias y Alertas:** Consulta de saldos en tiempo real e identificación visual de productos iguales o inferiores al nivel mínimo configurado.
+6. **Trazabilidad y Reportes:** Historial detallado por periodo que incluye folio, tipo de movimiento, cantidad, saldo anterior y posterior, fecha y usuario responsable.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Metodología de Desarrollo (Scrum)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+El proyecto se desarrolla bajo el marco de trabajo **Scrum** dividido en **6 sprints** de dos semanas (del 21 de septiembre al 8 de diciembre):
 
-## Security Vulnerabilities
+- **Sprint 1:** Definición validada, wireframes, arquitectura inicial y configuración de ambientes.
+- **Sprint 2:** Módulo de autenticación y gestión de datos maestros de productos.
+- **Sprint 3:** Unidades, equivalencias y registro de entradas de mercancía.
+- **Sprint 4:** Registro de salidas y ajustes con protección de inventario.
+- **Sprint 5:** Gestión de proveedores, filtros de búsqueda, mínimos y alertas de stock bajo.
+- **Sprint 6:** Reportes operativos, pruebas integrales de seguridad/responsividad, despliegue en producción (`HTTPS`) y respaldos.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## Requisitos No Funcionales Clave
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Seguridad:** Cifrado de contraseñas mediante hash y comunicaciones cifradas vía HTTPS.
+- **Rendimiento:** Las consultas principales deben responder en menos de 10 segundos con el volumen inicial esperado.
+- **Responsividad:** Funcional en versiones vigentes de Chrome, Edge y Firefox, con soporte adaptable desde dispositivos de $360\text{ px}$ de ancho.
+- **Integridad Transaccional:** Los movimientos y la actualización de saldos se ejecutan estrictamente dentro de una transacción de base de datos para evitar registros parciales.
+
+---
+
+## Estructura de Navegación del Sistema
+
+- `/login` - Inicio de sesión seguro.
+- `/dashboard` - Panel principal con indicadores (productos activos, bajo mínimo, entradas/salidas del día), accesos rápidos y alertas.
+- `/productos y catalogos` - Listado, filtros, búsqueda y formulario de alta/edición de productos.
+- `/movimientos/new` - Registro interactivo de entradas, salidas y ajustes con cálculo de existencia resultante.
+- `/reportes y auditoria` - Historial de movimientos y reportes operativos por periodo.
+- `/proveedores` - Registro de proveedores|
+
+---
+
+## Licencia y Documentación
+
+Este proyecto forma parte de la documentación académica y técnica del programa de la Universidad Tecnológica de Torreón. Todos los derechos reservados sobre la identidad visual y código fuente de MADU.
