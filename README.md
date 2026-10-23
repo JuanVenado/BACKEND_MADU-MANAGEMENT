@@ -95,3 +95,8 @@ Este proyecto forma parte de la documentación académica y técnica del program
 
 Toda documentacion previa del proyecto se encuentra ubicada en la ruta /docs
 
+## FIGMA
+
+Link de figma:
+
+https://www.figma.com/design/QooH8XDGz8NV638pHfENwx/MADU_Project?node-id=0-1&p=f&t=720wSZl1C4youkem-0
