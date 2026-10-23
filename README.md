@@ -90,3 +90,8 @@ El proyecto se desarrolla bajo el marco de trabajo **Scrum** dividido en **6 spr
 ## Licencia y Documentación
 
 Este proyecto forma parte de la documentación académica y técnica del programa de la Universidad Tecnológica de Torreón. Todos los derechos reservados sobre la identidad visual y código fuente de MADU.
+
+## Documentacion
+
+Toda documentacion previa del proyecto se encuentra ubicada en la ruta /docs
+
