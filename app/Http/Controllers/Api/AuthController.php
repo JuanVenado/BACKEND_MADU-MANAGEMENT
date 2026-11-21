@@ -3,23 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
 use App\Models\Usuario;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request): JsonResponse
     {
-        $request->validate([
-            'nombre' => 'required|string',
-            'password' => 'required|string',
-        ]);
+        $credenciales = $request->validated();
+        $usuario = Usuario::where('nombre', $credenciales['nombre'])->first();
 
-        $usuario = Usuario::where('nombre', $request->nombre)->first();
-
-        if (!$usuario || !Hash::check($request->password, $usuario->password)) {
+        if (!$usuario || !Hash::check($credenciales['password'], $usuario->password)) {
             throw ValidationException::withMessages([
                 'nombre' => ['Las credenciales proporcionadas son incorrectas.'],
             ]);
@@ -40,9 +38,9 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
-        return response()->json(['success' => true, 'message' => 'Sesion cerrada'], 200);
+        return response()->json(['success' => true, 'data' => null, 'message' => 'Sesion cerrada'], 200);
     }
 }

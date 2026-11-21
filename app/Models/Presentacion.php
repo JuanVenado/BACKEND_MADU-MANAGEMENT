@@ -9,6 +9,8 @@ class Presentacion extends Model
 {
     use HasFactory;
 
+    protected $table = 'presentaciones';
+
     protected $fillable = [
         'nombre',
         'activo',

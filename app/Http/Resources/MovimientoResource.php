@@ -12,8 +12,11 @@ class MovimientoResource extends JsonResource
             'folio' => $this->folio,
             'tipo' => $this->tipo,
             'cantidad' => $this->cantidad,
-            'producto' => $this->producto?->nombre,
-            'usuario' => $this->usuario?->nombre,
+            'cantidad_base' => $this->cantidad_base,
+            'saldo_anterior' => $this->saldo_anterior,
+            'saldo_posterior' => $this->saldo_posterior,
+            'producto' => $this->resource->getRelation('producto')?->nombre,
+            'usuario' => $this->resource->getRelation('usuario')?->nombre,
             'fecha' => $this->created_at?->toDateTimeString(),
         ];
     }

@@ -10,5 +10,5 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('productos', ProductoController::class);
-    Route::apiResource('movimientos', MovimientoController::class);
+    Route::apiResource('movimientos', MovimientoController::class)->only(['index', 'store', 'show']);
 });
