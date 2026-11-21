@@ -5,33 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens; // <--- AGREGAR ESTA LINEA
 
 class Usuario extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable; // <--- AGREGAR HasApiTokens AQUI
 
-    protected $fillable = [
-        'nombre',
-        'password',
-        'activo',
-    ];
+    protected $fillable = ['nombre', 'password', 'activo'];
+    protected $hidden = ['password'];
+    protected $casts = ['activo' => 'boolean', 'password' => 'hashed'];
 
-    protected $hidden = [
-        'password',
-    ];
-
-    protected $casts = [
-        'activo' => 'boolean',
-        'password' => 'hashed',
-    ];
-
-    public function movimientos()
-    {
-        return $this->hasMany(Movimiento::class, 'usuario');
-    }
-
-    public function auditorias()
-    {
-        return $this->hasMany(Auditoria::class, 'usuario');
-    }
+    public function movimientos() { return $this->hasMany(Movimiento::class, 'usuario'); }
+    public function auditorias() { return $this->hasMany(Auditoria::class, 'usuario'); }
 }

@@ -26,12 +26,13 @@ class Producto extends Model
         'stock_min' => 'integer',
     ];
 
-    public function categoria()
+    // Renombradas para evitar conflicto con las columnas 'categoria' y 'unidad'
+    public function categoriaRel()
     {
         return $this->belongsTo(Categoria::class, 'categoria');
     }
 
-    public function unidad()
+    public function unidadRel()
     {
         return $this->belongsTo(Unidad::class, 'unidad');
     }
