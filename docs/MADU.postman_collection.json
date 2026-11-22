@@ -1,0 +1,1566 @@
+{
+  "info": {
+    "name": "MADU · API REST",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "MADU-20. Rutas publicadas en main (c5e7657). Configura base_url sin /api y credenciales de prueba en un entorno local.\n\nPrueba rápida: ejecuta únicamente la carpeta Prueba rápida. Para operaciones de escritura, usa una base de prueba y completa los IDs de datos existentes. Ejecuta esas peticiones individualmente."
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "usuario_nombre",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "usuario_password",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "categoria_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "unidad_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "producto_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "producto_codigo",
+      "value": "MADU-POSTMAN-001",
+      "type": "string"
+    },
+    {
+      "key": "producto_presentacion_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "movimiento_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "recurso_inexistente_id",
+      "value": "2147483647",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Prueba rápida",
+      "item": [
+        {
+          "name": "Iniciar sesión",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/login",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{{login_body}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.variables.set(\"login_body\", JSON.stringify({ nombre: pm.variables.get(\"usuario_nombre\"), password: pm.variables.get(\"usuario_password\") }));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(true); });",
+                  "pm.test(\"El login devuelve un token\", () => pm.expect(payload.data.token).to.be.a(\"string\").and.not.be.empty);",
+                  "if (pm.response.code === 200 && payload.data?.token) pm.collectionVariables.set(\"token\", payload.data.token);"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Iniciar sesión",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/login",
+                "description": "",
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"usuario-de-prueba\",\n  \"password\": \"CONTRASENA_DE_PRUEBA\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"usuario\": {\n      \"id\": 1,\n      \"nombre\": \"Usuario de prueba\",\n      \"activo\": true\n    },\n    \"token\": \"TOKEN_DE_EJEMPLO\"\n  },\n  \"message\": \"Inicio de sesion exitoso\"\n}"
+            },
+            {
+              "name": "Credenciales inválidas",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/login",
+                "description": "",
+                "auth": {
+                  "type": "noauth"
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"usuario-de-prueba\",\n  \"password\": \"CONTRASENA_DE_PRUEBA\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": {\n    \"errors\": {\n      \"nombre\": [\n        \"Las credenciales proporcionadas son incorrectas.\"\n      ]\n    }\n  },\n  \"message\": \"Los datos de la solicitud no son válidos.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Listar productos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/productos",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(true); });",
+                  "pm.test(\"El listado es un arreglo\", () => pm.expect(payload.data).to.be.an(\"array\"));"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Listar productos",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos",
+                "description": ""
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"nombre\": \"Tornillo de ejemplo\",\n      \"descripcion\": \"Producto de prueba\",\n      \"coding\": \"POSTMAN-001\",\n      \"categoria\": \"General\",\n      \"unidad\": \"PZ\",\n      \"activo\": true,\n      \"stock_min\": 10,\n      \"created_at\": \"2026-11-21 12:00:00\"\n    }\n  ],\n  \"message\": \"Lista de productos\"\n}"
+            },
+            {
+              "name": "Sin token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos",
+                "description": ""
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Autenticación requerida.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Listar productos sin token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/productos",
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(false); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Listar productos sin token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos",
+                "description": "",
+                "auth": {
+                  "type": "noauth"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Autenticación requerida.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Cerrar sesión",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/logout",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(true); });",
+                  "if (pm.response.code === 200) pm.collectionVariables.unset(\"token\");"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Cerrar sesión",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/logout",
+                "description": ""
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": null,\n  \"message\": \"Sesion cerrada\"\n}"
+            },
+            {
+              "name": "Sin token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/logout",
+                "description": ""
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Autenticación requerida.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Productos",
+      "item": [
+        {
+          "name": "Crear producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/productos",
+            "description": "Usa IDs existentes de unidad y categoría y un código único. Guarda el ID para las siguientes peticiones.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(true); });",
+                  "if (pm.response.code === 201 && payload.data?.id) pm.collectionVariables.set(\"producto_id\", payload.data.id);"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Crear producto",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos",
+                "description": "Usa IDs existentes de unidad y categoría y un código único. Guarda el ID para las siguientes peticiones.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"nombre\": \"Tornillo de ejemplo\",\n    \"descripcion\": \"Producto de prueba\",\n    \"coding\": \"POSTMAN-001\",\n    \"categoria\": \"General\",\n    \"unidad\": \"PZ\",\n    \"activo\": true,\n    \"stock_min\": 10,\n    \"created_at\": \"2026-11-21 12:00:00\"\n  },\n  \"message\": \"Producto creado\"\n}"
+            },
+            {
+              "name": "Sin token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos",
+                "description": "Usa IDs existentes de unidad y categoría y un código único. Guarda el ID para las siguientes peticiones.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Autenticación requerida.\"\n}"
+            },
+            {
+              "name": "Datos inválidos",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos",
+                "description": "Usa IDs existentes de unidad y categoría y un código único. Guarda el ID para las siguientes peticiones.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": {\n    \"errors\": {\n      \"nombre\": [\n        \"El nombre es obligatorio.\"\n      ]\n    }\n  },\n  \"message\": \"Los datos de la solicitud no son válidos.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Consultar producto",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/productos/{{producto_id}}",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Consultar producto",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": ""
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"nombre\": \"Tornillo de ejemplo\",\n    \"descripcion\": \"Producto de prueba\",\n    \"coding\": \"POSTMAN-001\",\n    \"categoria\": \"General\",\n    \"unidad\": \"PZ\",\n    \"activo\": true,\n    \"stock_min\": 10,\n    \"created_at\": \"2026-11-21 12:00:00\"\n  },\n  \"message\": \"Producto obtenido\"\n}"
+            },
+            {
+              "name": "Sin token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": ""
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Autenticación requerida.\"\n}"
+            },
+            {
+              "name": "Recurso inexistente",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": ""
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Recurso no encontrado.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Actualizar producto (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/productos/{{producto_id}}",
+            "description": "Envía también los campos requeridos nombre, unidad, categoria y coding. PATCH usa la misma validación.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Actualizar producto (PUT)",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": "Envía también los campos requeridos nombre, unidad, categoria y coding. PATCH usa la misma validación.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"nombre\": \"Tornillo de ejemplo\",\n    \"descripcion\": \"Producto de prueba\",\n    \"coding\": \"POSTMAN-001\",\n    \"categoria\": \"General\",\n    \"unidad\": \"PZ\",\n    \"activo\": true,\n    \"stock_min\": 10,\n    \"created_at\": \"2026-11-21 12:00:00\"\n  },\n  \"message\": \"Producto actualizado\"\n}"
+            },
+            {
+              "name": "Sin token",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": "Envía también los campos requeridos nombre, unidad, categoria y coding. PATCH usa la misma validación.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Autenticación requerida.\"\n}"
+            },
+            {
+              "name": "Datos inválidos",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": "Envía también los campos requeridos nombre, unidad, categoria y coding. PATCH usa la misma validación.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": {\n    \"errors\": {\n      \"nombre\": [\n        \"El nombre es obligatorio.\"\n      ]\n    }\n  },\n  \"message\": \"Los datos de la solicitud no son válidos.\"\n}"
+            },
+            {
+              "name": "Recurso inexistente",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": "Envía también los campos requeridos nombre, unidad, categoria y coding. PATCH usa la misma validación.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Recurso no encontrado.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Actualizar producto (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/productos/{{producto_id}}",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Actualizar producto (PATCH)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"nombre\": \"Tornillo de ejemplo\",\n    \"descripcion\": \"Producto de prueba\",\n    \"coding\": \"POSTMAN-001\",\n    \"categoria\": \"General\",\n    \"unidad\": \"PZ\",\n    \"activo\": true,\n    \"stock_min\": 10,\n    \"created_at\": \"2026-11-21 12:00:00\"\n  },\n  \"message\": \"Producto actualizado\"\n}"
+            },
+            {
+              "name": "Sin token",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Autenticación requerida.\"\n}"
+            },
+            {
+              "name": "Datos inválidos",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": {\n    \"errors\": {\n      \"nombre\": [\n        \"El nombre es obligatorio.\"\n      ]\n    }\n  },\n  \"message\": \"Los datos de la solicitud no son válidos.\"\n}"
+            },
+            {
+              "name": "Recurso inexistente",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": "",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Tornillo de ejemplo\",\n  \"descripcion\": \"Producto de prueba\",\n  \"unidad\": \"{{unidad_id}}\",\n  \"categoria\": \"{{categoria_id}}\",\n  \"activo\": true,\n  \"existencial\": true,\n  \"stock_min\": 10,\n  \"coding\": \"{{producto_codigo}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Recurso no encontrado.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Consultar producto inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/productos/{{recurso_inexistente_id}}",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(false); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Consultar producto inexistente",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{recurso_inexistente_id}}",
+                "description": ""
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Recurso no encontrado.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Eliminar producto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/productos/{{producto_id}}",
+            "description": "Ejecuta solo con un producto descartable sin movimientos asociados. Esta operación elimina el producto de la base."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Eliminar producto",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": "Ejecuta solo con un producto descartable sin movimientos asociados. Esta operación elimina el producto de la base."
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": null,\n  \"message\": \"Producto eliminado\"\n}"
+            },
+            {
+              "name": "Sin token",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": "Ejecuta solo con un producto descartable sin movimientos asociados. Esta operación elimina el producto de la base."
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Autenticación requerida.\"\n}"
+            },
+            {
+              "name": "Recurso inexistente",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/productos/{{producto_id}}",
+                "description": "Ejecuta solo con un producto descartable sin movimientos asociados. Esta operación elimina el producto de la base."
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Recurso no encontrado.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Movimientos",
+      "item": [
+        {
+          "name": "Listar movimientos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/movimientos",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Listar movimientos",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/movimientos",
+                "description": ""
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"folio\": \"MOV-01K00000000000000000000000\",\n      \"tipo\": \"entrada\",\n      \"cantidad\": \"3.00\",\n      \"cantidad_base\": \"3.00\",\n      \"saldo_anterior\": \"0.00\",\n      \"saldo_posterior\": \"3.00\",\n      \"producto\": \"Tornillo de ejemplo\",\n      \"usuario\": \"Usuario de prueba\",\n      \"fecha\": \"2026-11-21 12:00:00\"\n    }\n  ],\n  \"message\": \"Lista de movimientos\"\n}"
+            },
+            {
+              "name": "Sin token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/movimientos",
+                "description": ""
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Autenticación requerida.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Registrar entrada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/movimientos",
+            "description": "Usa una asociación producto–presentación del mismo producto. Tipos: entrada, salida y ajuste. El ajuste requiere motivo. Folio y referencia son opcionales.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"producto\": \"{{producto_id}}\",\n  \"producto_presentacion\": \"{{producto_presentacion_id}}\",\n  \"tipo\": \"entrada\",\n  \"cantidad\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(true); });",
+                  "if (pm.response.code === 201 && payload.data?.id) pm.collectionVariables.set(\"movimiento_id\", payload.data.id);"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Registrar entrada",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/movimientos",
+                "description": "Usa una asociación producto–presentación del mismo producto. Tipos: entrada, salida y ajuste. El ajuste requiere motivo. Folio y referencia son opcionales.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"producto\": \"{{producto_id}}\",\n  \"producto_presentacion\": \"{{producto_presentacion_id}}\",\n  \"tipo\": \"entrada\",\n  \"cantidad\": 3\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"folio\": \"MOV-01K00000000000000000000000\",\n    \"tipo\": \"entrada\",\n    \"cantidad\": \"3.00\",\n    \"cantidad_base\": \"3.00\",\n    \"saldo_anterior\": \"0.00\",\n    \"saldo_posterior\": \"3.00\",\n    \"producto\": \"Tornillo de ejemplo\",\n    \"usuario\": \"Usuario de prueba\",\n    \"fecha\": \"2026-11-21 12:00:00\"\n  },\n  \"message\": \"Movimiento registrado\"\n}"
+            },
+            {
+              "name": "Sin token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/movimientos",
+                "description": "Usa una asociación producto–presentación del mismo producto. Tipos: entrada, salida y ajuste. El ajuste requiere motivo. Folio y referencia son opcionales.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"producto\": \"{{producto_id}}\",\n  \"producto_presentacion\": \"{{producto_presentacion_id}}\",\n  \"tipo\": \"entrada\",\n  \"cantidad\": 3\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Autenticación requerida.\"\n}"
+            },
+            {
+              "name": "Movimiento inválido",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/movimientos",
+                "description": "Usa una asociación producto–presentación del mismo producto. Tipos: entrada, salida y ajuste. El ajuste requiere motivo. Folio y referencia son opcionales.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"producto\": \"{{producto_id}}\",\n  \"producto_presentacion\": \"{{producto_presentacion_id}}\",\n  \"tipo\": \"entrada\",\n  \"cantidad\": 3\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": {\n    \"errors\": {\n      \"producto\": [\n        \"El producto seleccionado no es válido.\"\n      ]\n    }\n  },\n  \"message\": \"Los datos de la solicitud no son válidos.\"\n}"
+            },
+            {
+              "name": "Salida con stock insuficiente",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/movimientos",
+                "description": "Usa una asociación producto–presentación del mismo producto. Tipos: entrada, salida y ajuste. El ajuste requiere motivo. Folio y referencia son opcionales.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"producto\": \"{{producto_id}}\",\n  \"producto_presentacion\": \"{{producto_presentacion_id}}\",\n  \"tipo\": \"salida\",\n  \"cantidad\": 999\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": {\n    \"errors\": {\n      \"cantidad\": [\n        \"El saldo resultante está fuera del rango permitido.\"\n      ]\n    }\n  },\n  \"message\": \"Los datos de la solicitud no son válidos.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Consultar movimiento",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/movimientos/{{movimiento_id}}",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const payload = pm.response.json();",
+                  "pm.test(\"Contrato JSON\", () => { pm.expect(payload).to.include.all.keys(\"success\", \"data\", \"message\"); pm.expect(payload.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "Consultar movimiento",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/movimientos/{{movimiento_id}}",
+                "description": ""
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"folio\": \"MOV-01K00000000000000000000000\",\n    \"tipo\": \"entrada\",\n    \"cantidad\": \"3.00\",\n    \"cantidad_base\": \"3.00\",\n    \"saldo_anterior\": \"0.00\",\n    \"saldo_posterior\": \"3.00\",\n    \"producto\": \"Tornillo de ejemplo\",\n    \"usuario\": \"Usuario de prueba\",\n    \"fecha\": \"2026-11-21 12:00:00\"\n  },\n  \"message\": \"Movimiento obtenido\"\n}"
+            },
+            {
+              "name": "Sin token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/movimientos/{{movimiento_id}}",
+                "description": ""
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Autenticación requerida.\"\n}"
+            },
+            {
+              "name": "Recurso inexistente",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": "{{base_url}}/api/movimientos/{{movimiento_id}}",
+                "description": ""
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Recurso no encontrado.\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
