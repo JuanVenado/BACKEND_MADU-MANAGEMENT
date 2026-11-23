@@ -93,7 +93,7 @@ Este proyecto forma parte de la documentación académica y técnica del program
 
 ## Documentacion
 
-Toda documentacion previa del proyecto se encuentra ubicada en la ruta /docs
+Consulta la [guía del backend y sus APIs](docs/BACKEND.md) y el resto de la [documentación del proyecto](docs/).
 
 ## FIGMA
 
