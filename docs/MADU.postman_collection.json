@@ -56,6 +56,11 @@
       "type": "string"
     },
     {
+      "key": "presentacion_id",
+      "value": "",
+      "type": "string"
+    },
+    {
       "key": "producto_presentacion_id",
       "value": "",
       "type": "string"
@@ -1098,7 +1103,7 @@
           ]
         },
         {
-          "name": "Eliminar producto",
+          "name": "Desactivar producto",
           "request": {
             "method": "DELETE",
             "header": [
@@ -1108,7 +1113,7 @@
               }
             ],
             "url": "{{base_url}}/api/productos/{{producto_id}}",
-            "description": "Ejecuta solo con un producto descartable sin movimientos asociados. Esta operación elimina el producto de la base."
+            "description": "Desactiva el producto y conserva su historial de movimientos."
           },
           "event": [
             {
@@ -1125,7 +1130,7 @@
           ],
           "response": [
             {
-              "name": "Eliminar producto",
+              "name": "Desactivar producto",
               "originalRequest": {
                 "method": "DELETE",
                 "header": [
@@ -1135,7 +1140,7 @@
                   }
                 ],
                 "url": "{{base_url}}/api/productos/{{producto_id}}",
-                "description": "Ejecuta solo con un producto descartable sin movimientos asociados. Esta operación elimina el producto de la base."
+                "description": "Desactiva el producto y conserva su historial de movimientos."
               },
               "status": "OK",
               "code": 200,
@@ -1145,7 +1150,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"success\": true,\n  \"data\": null,\n  \"message\": \"Producto eliminado\"\n}"
+              "body": "{\n  \"success\": true,\n  \"data\": null,\n  \"message\": \"Producto desactivado\"\n}"
             },
             {
               "name": "Sin token",
@@ -1158,7 +1163,7 @@
                   }
                 ],
                 "url": "{{base_url}}/api/productos/{{producto_id}}",
-                "description": "Ejecuta solo con un producto descartable sin movimientos asociados. Esta operación elimina el producto de la base."
+                "description": "Desactiva el producto y conserva su historial de movimientos."
               },
               "status": "Unauthorized",
               "code": 401,
@@ -1181,7 +1186,7 @@
                   }
                 ],
                 "url": "{{base_url}}/api/productos/{{producto_id}}",
-                "description": "Ejecuta solo con un producto descartable sin movimientos asociados. Esta operación elimina el producto de la base."
+                "description": "Desactiva el producto y conserva su historial de movimientos."
               },
               "status": "Not Found",
               "code": 404,
@@ -1192,6 +1197,46 @@
                 }
               ],
               "body": "{\n  \"success\": false,\n  \"data\": null,\n  \"message\": \"Recurso no encontrado.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Presentaciones por producto",
+      "item": [
+        {
+          "name": "Asignar presentación a producto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"factor_conversion\": 12\n}"
+            },
+            "url": "{{base_url}}/api/productos/{{producto_id}}/presentaciones/{{presentacion_id}}",
+            "description": "Usa el ID de catálogo como presentacion_id. Al guardar, la prueba registra el ID de la asociación que se usa en Movimientos."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+                  "const payload = pm.response.json();",
+                  "if (payload.success && payload.data?.id) pm.collectionVariables.set(\"producto_presentacion_id\", String(payload.data.id));"
+                ]
+              }
             }
           ]
         }

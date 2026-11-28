@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Producto extends Model
 {
@@ -50,5 +52,15 @@ class Producto extends Model
     public function movimientos()
     {
         return $this->hasMany(Movimiento::class, 'producto');
+    }
+
+    public function presentacionesAsignadas(): HasMany
+    {
+        return $this->hasMany(ProductoPresentacion::class, 'producto');
+    }
+
+    public function ultimoMovimiento(): HasOne
+    {
+        return $this->hasOne(Movimiento::class, 'producto')->latestOfMany();
     }
 }

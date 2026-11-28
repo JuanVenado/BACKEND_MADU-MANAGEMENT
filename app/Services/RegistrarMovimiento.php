@@ -15,12 +15,18 @@ class RegistrarMovimiento
     {
         return DB::transaction(function () use ($datos, $usuarioId): Movimiento {
             $producto = Producto::query()->lockForUpdate()->findOrFail($datos['producto']);
-            $presentacionValida = ProductoPresentacion::query()
+            if (! $producto->activo) {
+                throw ValidationException::withMessages([
+                    'producto' => ['El producto está desactivado.'],
+                ]);
+            }
+
+            $asignacion = ProductoPresentacion::query()
                 ->whereKey($datos['producto_presentacion'])
                 ->where('producto', $producto->getKey())
-                ->exists();
+                ->first();
 
-            if (!$presentacionValida) {
+            if ($asignacion === null) {
                 throw ValidationException::withMessages([
                     'producto_presentacion' => ['La presentación no pertenece al producto.'],
                 ]);
@@ -33,9 +39,18 @@ class RegistrarMovimiento
                 ]);
             }
 
+            // Multiplica centésimas por un factor de cuatro decimales y redondea a centésimas.
+            $factor = (int) round($asignacion->factor_conversion * 10_000);
+            $cantidadBase = intdiv($cantidad * $factor + ($cantidad < 0 ? -5_000 : 5_000), 10_000);
+            if ($cantidadBase === 0) {
+                throw ValidationException::withMessages([
+                    'cantidad' => ['La cantidad convertida debe ser de al menos 0.01 unidades base.'],
+                ]);
+            }
+
             $ultimoSaldo = $producto->movimientos()->latest('id')->value('saldo_posterior');
             $saldoAnterior = (int) round(($ultimoSaldo ?? 0) * 100);
-            $variacion = $datos['tipo'] === 'salida' ? -$cantidad : $cantidad;
+            $variacion = $datos['tipo'] === 'salida' ? -$cantidadBase : $cantidadBase;
             $saldoPosterior = $saldoAnterior + $variacion;
 
             if ($saldoPosterior < 0 || $saldoPosterior > 9999999999) {
@@ -44,8 +59,7 @@ class RegistrarMovimiento
                 ]);
             }
 
-            // La relación producto-presentación todavía no almacena una equivalencia.
-            $datos['cantidad_base'] = $this->decimal($cantidad);
+            $datos['cantidad_base'] = $this->decimal($cantidadBase);
             $datos['saldo_anterior'] = $this->decimal($saldoAnterior);
             $datos['saldo_posterior'] = $this->decimal($saldoPosterior);
             $datos['usuario'] = $usuarioId;
