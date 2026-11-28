@@ -1,6 +1,6 @@
 # Backend de MADU
 
-MADU expone una API REST para el frontend en React. Esta guía describe el contrato disponible en `main` a partir del commit `c5e7657` y el avance de los módulos en otras ramas.
+MADU expone una API REST para el frontend en React. Esta guía describe el contrato de la API y el avance de los módulos.
 
 ## Arquitectura y entorno local
 
@@ -42,7 +42,8 @@ Los cuerpos y los parámetros se detallan debajo de la tabla. La fuente de las r
 | `POST /api/productos` | Token | Crea un producto. |
 | `GET /api/productos/{id}` | Token | Consulta un producto. |
 | `PUT /api/productos/{id}`, `PATCH /api/productos/{id}` | Token | Edita un producto. Ambos métodos requieren los campos obligatorios. |
-| `DELETE /api/productos/{id}` | Token | Ejecuta la eliminación física. |
+| `DELETE /api/productos/{id}` | Token | Desactiva el producto y conserva su historial. |
+| `PUT /api/productos/{producto}/presentaciones/{presentacion}` | Token | Asigna una presentación al producto o actualiza su factor de conversión. |
 | `GET /api/movimientos` | Token | Lista movimientos sin paginación, con los más recientes primero. |
 | `POST /api/movimientos` | Token | Registra una entrada, salida o ajuste. |
 | `GET /api/movimientos/{id}` | Token | Consulta un movimiento. |
@@ -61,7 +62,9 @@ En alta y edición, envía `nombre`, `coding` único y los IDs existentes de `un
 }
 ```
 
-El recurso devuelve `id`, `nombre`, `descripcion`, `coding`, `categoria`, `unidad`, `activo`, `stock_min` y `created_at`. Cuando carga las relaciones, `categoria` contiene el nombre y `unidad` la abreviatura. Para enviar un formulario usa los IDs de catálogo.
+El recurso devuelve `categoria_id` y `unidad_id` para el formulario, así como `categoria` con el nombre y `unidad` con la abreviatura. `saldo_actual` es una cadena con dos decimales y `stock_min` es el mínimo configurado. El detalle incluye `presentaciones`. En cada asignación, `id` identifica la fila que recibe `producto_presentacion` en un movimiento y `presentacion_id` identifica el catálogo de presentaciones.
+
+Para asignar una presentación envía `factor_conversion` en la ruta `PUT`. El factor es la cantidad de unidades base por presentación, admite hasta cuatro decimales y va de `0.0001` a `9999.9999`. Para una caja de 12 piezas envía `{"factor_conversion": 12}`. Si guardas de nuevo la misma asociación, conserva su `id`.
 
 ### Movimiento
 
@@ -77,7 +80,7 @@ Envía el ID de `producto` y el ID de la asociación `producto_presentacion` de 
 }
 ```
 
-El servicio obtiene el último saldo del producto, calcula el nuevo saldo y guarda el movimiento dentro de una transacción. Una salida que dejaría saldo negativo devuelve `400` sin guardar el movimiento. El recurso devuelve `cantidad_base`, `saldo_anterior` y `saldo_posterior`, además del folio, tipo, cantidad, producto, usuario y fecha. La cantidad base usa equivalencia 1:1 hasta que se incorpore el factor de conversión.
+El servicio multiplica la cantidad por el factor vigente, redondea a dos decimales en unidad base, calcula el nuevo saldo y guarda el movimiento dentro de una transacción. Una salida que dejaría saldo negativo o un movimiento sobre un producto desactivado devuelve `400`. Las asociaciones previas conservan equivalencia 1:1 hasta que se configure otro factor. El historial incluye la cantidad base guardada, ambos saldos, motivo y referencia.
 
 ## Datos y relaciones
 
@@ -99,10 +102,10 @@ Consulta las [migraciones](../database/migrations), el [DER](DER.jpeg) y el [dic
 | Administración de usuarios y consulta de auditorías (MADU-16 y MADU-17) | Implementación reportada en un worktree separado. Pendiente de verificar su publicación e integrar los permisos `administrar-usuarios` y `consultar-auditorias` con los roles de MADU-10. |
 | Colección Postman (MADU-20) | En [PR #9](https://github.com/JuanVenado/BACKEND_MADU-MANAGEMENT/pull/9). Incluye prueba rápida, productos y movimientos. |
 
-El contrato de `main` todavía tiene pendientes la baja lógica de productos, la conversión de presentaciones, la autorización por roles y la expiración de tokens por inactividad.
+Siguen pendientes la autorización por roles en las operaciones de inventario y la expiración de tokens por inactividad.
 
 ## Pruebas
 
 - **PHPUnit.** Ejecuta `php artisan test --filter=Scrum8ApiTest`. [phpunit.xml](../phpunit.xml) usa SQLite en memoria para las pruebas.
-- **Postman o Newman.** Desde una copia que incluya la colección del PR #9, levanta Laravel con una base de prueba. Importa `docs/MADU.postman_collection.json` y configura `base_url` sin el sufijo `/api`, `usuario_nombre` y `usuario_password`. Para recorrer los flujos completos configura también IDs de prueba de categoría, unidad, producto y asociación producto-presentación.
+- **Postman o Newman.** Levanta Laravel con una base de prueba e importa `docs/MADU.postman_collection.json`. Configura `base_url` sin el sufijo `/api`, `usuario_nombre` y `usuario_password`. Configura los IDs de prueba de categoría, unidad, producto y presentación de catálogo. Ejecuta **Asignar presentación a producto** para guardar el ID de la asociación que se usa en **Movimientos**.
 - **Prueba rápida por CLI.** Ejecuta `npx newman run docs/MADU.postman_collection.json --folder "Prueba rápida" -e <entorno-local.json>`, usando un entorno local de Postman con las variables de prueba. El flujo comprueba token en login, acceso con token, rechazo `401` sin token y logout.

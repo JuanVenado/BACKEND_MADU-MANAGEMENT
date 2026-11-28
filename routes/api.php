@@ -14,6 +14,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('productos', ProductoController::class);
+    Route::put('/productos/{producto}/presentaciones/{presentacion}', [ProductoController::class, 'guardarPresentacion']);
     Route::apiResource('movimientos', MovimientoController::class)->only(['index', 'store', 'show']);
     Route::apiResource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
     Route::apiResource('unidades', UnidadController::class)->parameters(['unidades' => 'unidad']);

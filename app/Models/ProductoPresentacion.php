@@ -16,6 +16,11 @@ class ProductoPresentacion extends Model
     protected $fillable = [
         'producto',
         'presentacion',
+        'factor_conversion',
+    ];
+
+    protected $casts = [
+        'factor_conversion' => 'decimal:4',
     ];
 
     public function producto()
