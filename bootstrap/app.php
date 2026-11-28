@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Middleware\CheckActiveUser;
+use App\Http\Middleware\CheckRole;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo(
             fn (Request $request) => $request->is('api', 'api/*') ? null : '/login',
         );
+        $middleware->alias([
+            'active' => CheckActiveUser::class,
+            'role' => CheckRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
@@ -25,7 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request): Response {
-            if (!$request->is('api', 'api/*')) {
+            if (! $request->is('api', 'api/*')) {
                 return $response;
             }
 
@@ -49,6 +56,13 @@ return Application::configure(basePath: dirname(__DIR__))
 
             $headers = $response->headers->all();
             unset($headers['content-type'], $headers['content-length']);
+
+            if ($exception instanceof AuthenticationException && $request->routeIs('api.user')) {
+                return response()->json([
+                    'message' => 'No autenticado.',
+                    'error' => 'unauthenticated',
+                ], $status, $headers);
+            }
 
             return response()->json([
                 'success' => false,
